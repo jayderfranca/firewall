@@ -2,7 +2,7 @@
 *.o
 *.a
 *.so
-*firewal*
+./firewal
 
 # Folders
 _obj
