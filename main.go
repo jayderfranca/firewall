@@ -56,7 +56,7 @@ func main() {
 
 	fmt.Println(opts)
 
-	config := Config{}
+	config := new(Config)
 	files, err := config.FileList()
 
 	for _, file := range files {
