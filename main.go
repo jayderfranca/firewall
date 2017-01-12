@@ -54,8 +54,14 @@ func main() {
 		os.Exit(-1)
 	}
 
-	// exibe os parametros
-	fmt.Printf("dry: %v, apply: %v, save: %v\n", opts.Dry, opts.Apply, opts.Save)
+	fmt.Println(opts)
+
+	config := Config{}
+	files, err := config.FileList()
+
+	for _, file := range files {
+		fmt.Println(file)
+	}
 
 	// finaliza o programa
 	os.Exit(0)
