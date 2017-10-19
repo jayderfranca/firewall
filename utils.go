@@ -4,6 +4,7 @@ import (
 	"os"
 	"bufio"
 	"fmt"
+	"strings"
 )
 
 // ReadLines realiza a leitura de todas as linhas de um arquivo
@@ -48,4 +49,9 @@ func IsComment(text string) bool {
 		return false
 	}
 	return true
+}
+
+// IsEmpty identifica que o valor informado eh vazio
+func IsEmpty(text string) bool {
+	return strings.Trim(text, " ") == ""
 }
