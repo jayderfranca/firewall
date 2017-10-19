@@ -1,0 +1,23 @@
+--source $LO --protocol all --jump ACCEPT
+
+--in-interface eth0 --out-interface eth1 --match mac --mac-source XX:XX:XX:XX:XX:XX --jump DROP
+--in-interface eth0 --out-interface eth1 --match mac --mac-source XX:XX:XX:XX:XX:XX --jump DROP
+
+--in-interface eth0 --source $LANs --protocol all --jump ACCEPT
+
+--in-interface eth1 --out-interface eth0 --protocol all --match state --state ESTABLISHED,RELATED --jump ACCEPT
+
+--in-interface tun0 --out-interface eth0 --protocol all --match state --state ESTABLISHED,RELATED --jump ACCEPT
+--in-interface tun0 --out-interface tun1 --protocol all --match state --state ESTABLISHED,RELATED --jump ACCEPT
+
+--in-interface tun1 --out-interface eth0 --protocol icmp --match state --state NEW --match limit --limit 3/second --limit-burst 6 --jump ACCEPT
+
+--in-interface tun1 --out-interface tun0 --protocol icmp --match state --state NEW --match limit --limit 3/second --limit-burst 6 --jump ACCEPT
+
+--in-interface tun1 --source $VPNAccess --out-interface eth0 --protocol all --match state --state NEW --jump ACCEPT
+
+--in-interface tun1 --source $VPNAccess --out-interface tun0 --protocol all --match state --state NEW --jump ACCEPT
+
+--in-interface tun1 --out-interface eth0 --protocol all --match state --state ESTABLISHED,RELATED --jump ACCEPT
+
+--in-interface tun1 --out-interface tun0 --protocol all --match state --state ESTABLISHED,RELATED --jump ACCEPT

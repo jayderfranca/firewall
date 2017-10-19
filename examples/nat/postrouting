@@ -1,0 +1,8 @@
+# acesso a internet
+--out-interface eth1 --jump MASQUERADE
+#
+# acesso a rede do site
+--out-interface tun0 --jump MASQUERADE
+#
+# acesso a rede da sysmap
+#--out-interface tun1 --jump MASQUERADE

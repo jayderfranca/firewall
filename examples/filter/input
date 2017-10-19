@@ -1,0 +1,63 @@
+# conexoes estabelecidas
+--match state --state RELATED,ESTABLISHED --jump ACCEPT
+#
+# libera a loopback e rede local
+--in-interface lo --protocol all --jump ACCEPT
+--in-interface eth0 --source $LANs --protocol all --jump ACCEPT
+#
+# dhcp da rede local
+--in-interface eth0 --protocol udp --source 0.0.0.0 --destination 255.255.255.255 --match udp --source-port 67:68 --destination-port 67:68 --jump ACCEPT
+#
+#
+# regras de conexoes do site com o gateway
+#
+# libera o protocolo icmp
+--in-interface tun0 --protocol icmp --match limit --limit 3/second --limit-burst 6 --jump ACCEPT
+#
+# ssh
+--in-interface tun0 --protocol tcp --match tcp --source-port 1024:65535 --destination-port ssh --match state --state NEW --jump ACCEPT
+#
+# libera o protocolo icmp
+--in-interface tun1 --protocol icmp --match limit --limit 3/second --limit-burst 6 --jump ACCEPT
+#
+# dns
+--in-interface tun1 --protocol tcp --match tcp --source-port 1024:65535 --destination-port domain --match state --state NEW --jump ACCEPT
+--in-interface tun1 --protocol udp --match udp --source-port 1024:65535 --destination-port domain --match state --state NEW --jump ACCEPT
+#
+# ssh
+--in-interface tun1 --protocol tcp --match tcp --source-port 1024:65535 --destination-port ssh --match state --state NEW --jump ACCEPT
+#
+# demais servicos abertos (ips restritos)
+--in-interface tun1 --source $VPNAccess --protocol all --match state --state NEW --jump ACCEPT
+#
+#
+# regras de conexoes da internet com o gateway
+#
+# libera o protocolo icmp
+--in-interface eth1 --protocol icmp --match limit --limit 3/second --limit-burst 6 --jump ACCEPT
+#
+# verifica o tcp flags
+--in-interface eth1 --protocol tcp --match tcp ! --syn --match limit --limit 3/second --limit-burst 6 --jump ACCEPT
+#
+# libera o multicast do modem
+--in-interface eth1 --source $Modem --destination $MMulticast --protocol igmp --jump ACCEPT
+#
+# acesso do modem a porta udp 137,138 / NetBIOS / broadcast
+--in-interface eth1 --source $Modem --destination $MBroadcast --protocol udp --match udp --source-port netbios-dgm --destination-port netbios-dgm --jump ACCEPT
+--in-interface eth1 --source $Modem --destination $MBroadcast --protocol udp --match udp --source-port netbios-ns --destination-port netbios-ns --jump ACCEPT
+#
+# ips liberados de validacao
+--in-interface eth1 --protocol all --source $IPLiberado --match state --state NEW --jump ACCEPT
+#
+# ssh
+--in-interface eth1 --protocol tcp --match tcp --source-port 1024:65535 --destination-port ssh --match state --state NEW --match recent --set --name ssh --rsource
+--in-interface eth1 --protocol tcp --match tcp --source-port 1024:65535 --destination-port ssh --match state --state NEW --match recent --update --seconds 30 --hitcount 5 --name ssh --rsource --jump REJECT --reject-with tcp-reset
+--in-interface eth1 --protocol tcp --match tcp --source-port 1024:65535 --destination-port ssh --match state --state NEW --jump ACCEPT
+#
+# marca qualquer entrada no firewall como default
+--in-interface eth1 --protocol tcp --match state --state NEW --match recent --set --name tcp --rsource
+--in-interface eth1 --protocol udp --match state --state NEW --match recent --set --name udp --rsource
+#
+# regra de tentativa de novas conexoes para protocolo tcp e udp
+--in-interface eth1 --protocol tcp --match state --state NEW --match recent --update --seconds 60 --hitcount 7 --name tcp --rsource --jump REJECT --reject-with tcp-reset
+--in-interface eth1 --protocol udp --match state --state NEW --match recent --update --seconds 60 --hitcount 7 --name udp --rsource --jump REJECT --reject-with icmp-port-unreachable

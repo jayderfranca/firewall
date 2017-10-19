@@ -1,0 +1,21 @@
+# configuracoes gerais
+
+# loopback
+LO=127.0.0.1/8
+
+# ip da rede local
+LANs=20.0.15.0/24
+
+VPNAccess=1.1.5.46/32,1.1.4.15/32,1.1.15.50/32
+
+# ip do modem
+Modem=192.168.25.1
+
+# multicast da rede do modem
+MMulticast=224.0.0.1
+
+# broadcast da rede do modem
+MBroadcast=192.168.25.255
+
+# ips liberados da validacao
+IPLiberado=77.2.8.9
