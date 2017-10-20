@@ -1,12 +1,17 @@
-package firewall
+package main
 
 import (
 	"os"
+	"fmt"
 )
 
 func main() {
 
-	lines := ReadLines("./_examples/filter/input")
+	iptables := FindExecutable("iptables")
+	ulogd := FindExecutable("ulogd")
+
+	fmt.Printf("IPTables: %s\n", iptables)
+	fmt.Printf("ULogd: %s\n", ulogd)
 
 	// finaliza o programa
 	os.Exit(0)
