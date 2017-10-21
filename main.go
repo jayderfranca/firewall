@@ -13,6 +13,9 @@ func main() {
 	fmt.Printf("IPTables: %s\n", iptables)
 	fmt.Printf("ULogd: %s\n", ulogd)
 
+	variables := GetVariables("./_examples/config")
+	fmt.Println(variables)
+
 	// finaliza o programa
 	os.Exit(0)
 }

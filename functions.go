@@ -65,7 +65,7 @@ func IsFDRegular(path string) bool {
 }
 
 // ReadLines realiza a leitura de todas as linhas de um arquivo
-func ReadLines(file string) []string {
+func ParseLines(file string) []string {
 
 	// linhas do arquivo
 	lines := []string{}
@@ -130,4 +130,40 @@ func FindExecutable(name string) string {
 
 	// caso nao encontre, retorna vazio
 	return ""
+}
+
+// GetVariables retorna as variaveis definidas em um arquivo na sintaxe key=valor
+func GetVariables(file string) map[string]string {
+
+	// cria o map de variaveis
+	result := make(map[string]string)
+
+	// carrega as linhas do arquivo
+	lines := ParseLines(file)
+
+	// lopp para obter as variaveis
+	for _, line := range lines {
+
+		// a linha esta vazia
+		if strings.Trim(line, " ") == "" {
+			continue
+		}
+
+		// a linha eh um comentario
+		if strings.TrimLeft(line, " ")[:1] == "#" {
+			continue
+		}
+
+		// a linha possui informacao,
+		// mas esta na sintaxe correta ?
+		if len(strings.Split(strings.Trim(line, " "), "=")) != 2 {
+			continue
+		}
+
+		// carrega no map as variaveis
+		data := strings.Split(strings.Trim(line, " "), "=")
+		result[data[0]] = data[1]
+	}
+
+	return result
 }
