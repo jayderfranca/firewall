@@ -94,6 +94,6 @@ func TestGetVariables(t *testing.T) {
 }
 
 func TestGetVariablesInvalidFile(t *testing.T) {
-	result := GetVariables("./etc/hosts")
+	result := GetVariables("/etc/hosts")
 	assert.Exactly(t, 0, len(result))
 }
